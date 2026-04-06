@@ -1,0 +1,700 @@
+{
+  "info": {
+    "_postman_id": "c8a6f3b5-0b2e-4b6f-9c7e-6c9f2b6d1b3a",
+    "name": "Medusa APIs invoked by marketplace-cms",
+    "description": "Collection generated from codebase usage. Targets Medusa backend endpoints under MERCUR_API_BASE_URL (store APIs) that are invoked by this repository.\n\nVariables:\n- MERCUR_API_BASE_URL (e.g. http://localhost:9000)\n- MERCUR_PUBLISHABLE_API_KEY\n- cart_id, line_item_id, payment_collection_id, region_id, country_code, variant_id, order_id, product_id, address_id, q, limit, offset\n\nNotes:\n- Most /store/* endpoints require x-publishable-api-key.\n- Customer endpoints may also require auth (cookie/session/JWT) depending on backend config; use Authorization header variables if needed.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "MERCUR_API_BASE_URL", "value": "http://localhost:9000" },
+    { "key": "MERCUR_PUBLISHABLE_API_KEY", "value": "" },
+    { "key": "cart_id", "value": "" },
+    { "key": "line_item_id", "value": "" },
+    { "key": "payment_collection_id", "value": "" },
+    { "key": "region_id", "value": "" },
+    { "key": "country_code", "value": "my" },
+    { "key": "variant_id", "value": "" },
+    { "key": "order_id", "value": "" },
+    { "key": "product_id", "value": "" },
+    { "key": "address_id", "value": "" },
+    { "key": "q", "value": "iphone" },
+    { "key": "limit", "value": "10" },
+    { "key": "offset", "value": "0" },
+    { "key": "fields", "value": "id,title,handle,thumbnail,variants" },
+    { "key": "customer_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Carts",
+      "item": [
+        {
+          "name": "Create cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{MERCUR_API_BASE_URL}}/store/carts", "host": ["{{MERCUR_API_BASE_URL}}"], "path": ["store", "carts"] },
+            "body": { "mode": "raw", "raw": "{\n  \"region_id\": \"{{region_id}}\",\n  \"country_code\": \"{{country_code}}\"\n}" }
+          }
+        },
+        {
+          "name": "Get cart",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update cart (set shipping address etc.)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shipping_address\": {\n    \"first_name\": \"Test\",\n    \"last_name\": \"User\",\n    \"address_1\": \"123 Main St\",\n    \"city\": \"Kuala Lumpur\",\n    \"country_code\": \"{{country_code}}\",\n    \"postal_code\": \"50000\",\n    \"phone\": \"+60123456789\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Add line item (standard)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/line-items",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "line-items"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"variant_id\": \"{{variant_id}}\",\n  \"quantity\": 1\n}" }
+          }
+        },
+        {
+          "name": "Add line item (custom line-items-add used by repo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/line-items-add",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "line-items-add"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"variant_id\": \"{{variant_id}}\",\n  \"quantity\": 1,\n  \"product_add_ons\": [\n    {\n      \"product_add_on_id\": \"{{product_add_on_id}}\",\n      \"quantity\": 1\n    }\n  ],\n  \"trade_in_draft_id\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update line item quantity",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/line-items/{{line_item_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "line-items", "{{line_item_id}}"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"quantity\": 1\n}" }
+          }
+        },
+        {
+          "name": "Delete line item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/line-items/{{line_item_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "line-items", "{{line_item_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Add shipping method",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/shipping-methods",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "shipping-methods"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"option_id\": \"{{shipping_option_id}}\"\n}" }
+          }
+        },
+        {
+          "name": "Delete shipping method (repo uses DELETE on same endpoint)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/shipping-methods",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "shipping-methods"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"option_id\": \"{{shipping_option_id}}\"\n}" }
+          }
+        },
+        {
+          "name": "Get shipping options (by cart_id)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/shipping-options?cart_id={{cart_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "shipping-options"],
+              "query": [{ "key": "cart_id", "value": "{{cart_id}}" }]
+            }
+          }
+        },
+        {
+          "name": "Apply promotion(s) to cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/promotions",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "promotions"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"promo_codes\": [\"PROMO10\"]\n}" }
+          }
+        },
+        {
+          "name": "Remove promotion(s) from cart",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/promotions",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "promotions"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"promo_codes\": [\"PROMO10\"]\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create payment sessions for cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/payment-sessions",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "payment-sessions"]
+            }
+          }
+        },
+        {
+          "name": "Set payment session (provider_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/payment-session",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "payment-session"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"provider_id\": \"{{provider_id}}\"\n}" }
+          }
+        },
+        {
+          "name": "Complete cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/complete",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "{{cart_id}}", "complete"]
+            }
+          }
+        },
+        {
+          "name": "List payment providers (optional region_id)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/payment-providers?region_id={{region_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "payment-providers"],
+              "query": [{ "key": "region_id", "value": "{{region_id}}" }]
+            }
+          }
+        },
+        {
+          "name": "Create payment collection",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/payment-collections",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "payment-collections"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"cart_id\": \"{{cart_id}}\"\n}" }
+          }
+        },
+        {
+          "name": "Create payment sessions for payment collection",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/payment-collections/{{payment_collection_id}}/payment-sessions",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": [
+                "store",
+                "payment-collections",
+                "{{payment_collection_id}}",
+                "payment-sessions"
+              ]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"provider_id\": \"{{provider_id}}\",\n  \"data\": {}\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products & Search",
+      "item": [
+        {
+          "name": "Get product by id/handle (fields optional)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/products/{{product_id}}?fields={{fields}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "products", "{{product_id}}"],
+              "query": [{ "key": "fields", "value": "{{fields}}" }]
+            }
+          }
+        },
+        {
+          "name": "Search products",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/search/products?q={{q}}&limit={{limit}}&offset={{offset}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "search", "products"],
+              "query": [
+                { "key": "q", "value": "{{q}}" },
+                { "key": "limit", "value": "{{limit}}" },
+                { "key": "offset", "value": "{{offset}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search documents (site-wide)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/search/documents?q={{q}}&page=1&limit={{limit}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "search", "documents"],
+              "query": [
+                { "key": "q", "value": "{{q}}" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "{{limit}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Promotions",
+      "item": [
+        {
+          "name": "List promotions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/promotions",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "promotions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "List orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/orders",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "orders"]
+            }
+          }
+        },
+        {
+          "name": "Get order by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/orders/{{order_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "orders", "{{order_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "Create customer (store customers)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}", "disabled": true }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/customers",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "customers"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"test@example.com\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"User\"\n}" }
+          }
+        },
+        {
+          "name": "Get current customer",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}", "disabled": true }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/customers/me",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "customers", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update current customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}", "disabled": true }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/customers/me",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "customers", "me"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"first_name\": \"Test\",\n  \"last_name\": \"User\"\n}" }
+          }
+        },
+        {
+          "name": "List addresses",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}", "disabled": true }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/customers/me/addresses",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "customers", "me", "addresses"]
+            }
+          }
+        },
+        {
+          "name": "Create address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}", "disabled": true }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/customers/me/addresses",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "customers", "me", "addresses"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Test\",\n  \"last_name\": \"User\",\n  \"address_1\": \"123 Main St\",\n  \"city\": \"Kuala Lumpur\",\n  \"country_code\": \"{{country_code}}\",\n  \"postal_code\": \"50000\",\n  \"phone\": \"+60123456789\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}", "disabled": true }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/customers/me/addresses/{{address_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "customers", "me", "addresses", "{{address_id}}"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"address_1\": \"123 Main St\"\n}" }
+          }
+        },
+        {
+          "name": "Delete address",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}", "disabled": true }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/customers/me/addresses/{{address_id}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "customers", "me", "addresses", "{{address_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Collections & Categories",
+      "item": [
+        {
+          "name": "List collections",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/collections",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "collections"]
+            }
+          }
+        },
+        {
+          "name": "List product categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/product-categories?limit={{limit}}&offset={{offset}}",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "product-categories"],
+              "query": [
+                { "key": "limit", "value": "{{limit}}" },
+                { "key": "offset", "value": "{{offset}}" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trade-in (store extensions)",
+      "item": [
+        {
+          "name": "Create trade-in quotation / draft",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/trade-in",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "trade-in"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"device\": {},\n  \"answers\": {}\n}" }
+          }
+        },
+        {
+          "name": "Get trade-in quotation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/trade-in/get-quotation",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "trade-in", "get-quotation"]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"device\": {},\n  \"answers\": {}\n}" }
+          }
+        },
+        {
+          "name": "Attach trade-in to cart line item",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/line-items/{{line_item_id}}/trade-in",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": [
+                "store",
+                "carts",
+                "{{cart_id}}",
+                "line-items",
+                "{{line_item_id}}",
+                "trade-in"
+              ]
+            },
+            "body": { "mode": "raw", "raw": "{\n  \"trade_in_draft_id\": \"{{trade_in_draft_id}}\"\n}" }
+          }
+        },
+        {
+          "name": "Remove trade-in from cart line item",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/{{cart_id}}/line-items/{{line_item_id}}/remove-trade-in",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": [
+                "store",
+                "carts",
+                "{{cart_id}}",
+                "line-items",
+                "{{line_item_id}}",
+                "remove-trade-in"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Renew N Go (store extension)",
+      "item": [
+        {
+          "name": "Create Renew N Go cart (store/carts/renew-n-go)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-publishable-api-key", "value": "{{MERCUR_PUBLISHABLE_API_KEY}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{MERCUR_API_BASE_URL}}/store/carts/renew-n-go",
+              "host": ["{{MERCUR_API_BASE_URL}}"],
+              "path": ["store", "carts", "renew-n-go"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"region_id\": \"{{region_id}}\",\n  \"country_code\": \"{{country_code}}\",\n  \"variant_id\": \"{{variant_id}}\",\n  \"quantity\": 1,\n  \"metadata\": null,\n  \"additional_data\": {\n    \"product_add_ons\": [\n      {\n        \"product_add_on_id\": \"{{product_add_on_id}}\",\n        \"quantity\": 1\n      }\n    ]\n  }\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
